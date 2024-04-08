@@ -51,8 +51,10 @@ def grow_and_breed():
         blanks = set(blanks)
         tx, ty = trees[idx]
         for bx, by in blanks:
-            board[bx][by] += board[tx][ty] // len(blanks)
-            trees.append((bx, by))
+            tmp = board[tx][ty] // len(blanks)
+            if tmp > 0:
+                board[bx][by] += tmp
+                trees.append((bx, by))
     
     trees = list(set(trees))
     trees.sort()
@@ -170,6 +172,7 @@ if __name__ == '__main__':
 
     init()
     for t in range(1, M+1):
+        # print("<<<<<<<<<<<<<< ", t, " >>>>>>>>>>>>>>>")
         # 제초제 갱신   
         update_remove_map()
 
@@ -185,5 +188,7 @@ if __name__ == '__main__':
         # print(*remove_map, sep='\n')
         # print("TREES")
         # print(trees, sep='\n')
+        # print("SCORE")
+        # print(ans)
     
     print(ans)
