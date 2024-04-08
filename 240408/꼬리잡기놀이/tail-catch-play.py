@@ -49,7 +49,7 @@ def solution(t):
 
                 # print(*board, sep='\n')
     # 1회 이동 상태
-    print(*board, sep='\n')
+    # print(*board, sep='\n')
     
 
     # 2) 공 던지기
@@ -90,7 +90,7 @@ def solution(t):
             break
 
 
-    print("점수: ",score)
+    # print("점수: ",score)
 
 if __name__ == '__main__':
     from collections import deque
