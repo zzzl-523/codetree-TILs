@@ -55,39 +55,50 @@ def solution(t):
     # 2) 공 던지기
     arrow = dir[t//K]
     for i in range(N):
-        if arrow[1] and 0<board[t%N][i][0]<4:    # 던지기 방향 왼, 오
-            # 사람 마주침
-            score += board[t%N][i][1]**2
-            team_num = board_idx[t%N][i]
-            
-            # 머리-꼬리 바꾸기
-            starter_list[team_num-1] = three_list[team_num-1]
-            one_xy = one_list[team_num-1]
-            three_xy = three_list[team_num-1]
-            board[one_xy[0]][one_xy[1]], board[three_xy[0]][three_xy[1]]  = board[three_xy[0]][three_xy[1]], board[one_xy[0]][one_xy[1]]
+        if arrow[1]:
+            if arrow[1] < 0:
+                idx = -i
+            else:
+                idx = i
+            if 0<board[t%N][idx][0]<4:    # 던지기 방향 왼, 오
+                # 사람 마주침
+                score += board[t%N][idx][1]**2
+                team_num = board_idx[t%N][idx]
+                
+                # 머리-꼬리 바꾸기
+                starter_list[team_num-1] = three_list[team_num-1]
+                one_xy = one_list[team_num-1]
+                three_xy = three_list[team_num-1]
+                board[one_xy[0]][one_xy[1]], board[three_xy[0]][three_xy[1]]  = board[three_xy[0]][three_xy[1]], board[one_xy[0]][one_xy[1]]
 
-            # print("changed")
-            # print("team_num: ", team_num)
-            # print("one: ", one_xy)
-            # print("three: ", three_xy)
-            # print(*board, sep='\n')
-            break
+                # print("changed")
+                # print("team_num: ", team_num)
+                # print("one: ", one_xy)
+                # print("three: ", three_xy)
+                # print(*board, sep='\n')
+                break
         
-        elif arrow[0] and 0<board[i][t%N][0]<4:    # 던지기 방향 왼, 오
-            score += board[i][t%N][1]**2
-            team_num = board_idx[i][t%N]
-            
-            # 머리-꼬리 바꾸기
-            starter_list[team_num-1] = three_list[team_num-1]
-            one_xy = one_list[team_num-1]
-            three_xy = three_list[team_num-1]
-            board[one_xy[0]][one_xy[1]], board[three_xy[0]][three_xy[1]]  = board[three_xy[0]][three_xy[1]], board[one_xy[0]][one_xy[1]]
-            
-            # print("changed")
-            # print(*board, sep='\n')
+        elif arrow[0]:
+            if arrow[0] < 0:
+                idx = -i
+            else:
+                idx = i
 
-            break
-            
+            if 0<board[idx][t%N][0]<4:    # 던지기 방향 왼, 오
+                score += board[idx][t%N][1]**2
+                team_num = board_idx[idx][t%N]
+                
+                # 머리-꼬리 바꾸기
+                starter_list[team_num-1] = three_list[team_num-1]
+                one_xy = one_list[team_num-1]
+                three_xy = three_list[team_num-1]
+                board[one_xy[0]][one_xy[1]], board[three_xy[0]][three_xy[1]]  = board[three_xy[0]][three_xy[1]], board[one_xy[0]][one_xy[1]]
+                
+                # print("changed")
+                # print(*board, sep='\n')
+
+                break
+
 
 if __name__ == '__main__':
     from collections import deque
@@ -149,23 +160,3 @@ if __name__ == '__main__':
         solution(t)
     
     print(score)
-
-
-
-
-[[4, 0], [3, 3], [2, 2], [0, 0], [0, 0], [0, 0], [0, 0]]
-[[4, 0], [0, 0], [1, 1], [0, 0], [2, 3], [2, 2], [1, 1]]
-[[4, 0], [4, 0], [4, 0], [0, 0], [3, 4], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [0, 0], [0, 0], [4, 0], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [4, 0], [4, 0], [4, 0], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [4, 0], [0, 0], [0, 0], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [4, 0], [4, 0], [4, 0], [4, 0], [4, 0]]
-[[0, 1], [1, 6]]
-[[1, 1], [2, 2], [2, 2], [0, 0], [0, 0], [0, 0], [0, 0]]
-[[4, 0], [0, 0], [1, 1], [0, 0], [3, 4], [2, 3], [2, 2]]
-[[4, 0], [4, 0], [4, 0], [0, 0], [4, 0], [0, 0], [1, 1]]
-[[0, 0], [0, 0], [0, 0], [0, 0], [4, 0], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [4, 0], [4, 0], [4, 0], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [4, 0], [0, 0], [0, 0], [0, 0], [4, 0]]
-[[0, 0], [0, 0], [4, 0], [4, 0], [4, 0], [4, 0], [4, 0]]
-[[0, 1], [2, 6]]
