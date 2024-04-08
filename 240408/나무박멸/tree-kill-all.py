@@ -76,30 +76,19 @@ def remove():
     for x, y in trees:
         # 대각선 확인
         cnt = board[x][y]
-        ck1, ck2, ck3, ck4 = True, True, True, True
+        ck = [True, True, True, True]
 
         for k in range(1, K+1):
-            if (x+k, y+k) in trees and ck1 and remove_map[x+k][y+k]==0:
-                cnt += board[x+k][y+k]
-            else:
-                ck1 = False
+            arr = [(x+k, y+k), (x-k, y-k), (x+k, y-k), (x-k, y+k)]
+            for idx, (nx, ny) in enumerate(arr):
+                if ck[idx] == False:
+                    continue
 
-            if (x-k, y-k) in trees and ck2 and remove_map[x-k][y-k]==0:
-                cnt += board[x-k][y-k]
-            else:
-                ck2 = False
-        
-            if (x+k, y-k) in trees and ck3 and remove_map[x+k][y-k]==0:
-                cnt += board[x+k][y-k]
-            else:
-                ck3 = False
+                ck[idx] = find_remove_tree(nx, ny, ck[idx])
+                if ck[idx] and ((nx, ny) in trees):
+                    cnt += board[nx][ny]
 
-            if (x-k, y+k) in trees and ck4 and remove_map[x-k][y+k]==0:
-                cnt += board[x-k][y+k]
-            else:
-                ck4 = False
-
-        # print(cnt)
+        # 박멸 최대 개수인 위치 찾기
         if cnt > max_value:
             max_pos = (x, y)
             max_value = cnt
@@ -124,6 +113,16 @@ def remove():
                 continue
             ck[i] = spread_remove_map(nx, ny, ck[i])
 
+def find_remove_tree(x, y, ck):
+    if 0<=x<N and 0<=y<N and ck:
+        if board[x][y] == -1:
+            return False
+        if board[x][y] == 0:
+            return False
+    else:
+        ck = False
+    
+    return ck
 
 def spread_remove_map(x, y, ck):
     expire_year = -C-1
