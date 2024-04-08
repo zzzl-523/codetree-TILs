@@ -95,23 +95,28 @@ def remove():
     
     # print("제초제: ", max_pos, max_value)
     # 제초제 뿌리기
-    ans += max_value
-    x, y = max_pos
-    expire_year = -C-1
+    if max_pos == (-1, -1):
+        # 더이상 나무 없음
+        return
 
-    # 제초제 뿌린 곳
-    remove_map[x][y] = expire_year
-    board[x][y] = 0
-    trees.remove((x, y))
+    else:
+        ans += max_value
+        x, y = max_pos
+        expire_year = -C-1
 
-    # 전파
-    ck = [True, True, True, True]
-    for k in range(1, K+1):
-        arr = [(x+k, y+k), (x-k, y-k), (x+k, y-k), (x-k, y+k)]
-        for i, (nx, ny) in enumerate(arr):
-            if ck[i]==False:
-                continue
-            ck[i] = spread_remove_map(nx, ny, ck[i])
+        # 제초제 뿌린 곳
+        remove_map[x][y] = expire_year
+        board[x][y] = 0
+        trees.remove((x, y))
+
+        # 전파
+        ck = [True, True, True, True]
+        for k in range(1, K+1):
+            arr = [(x+k, y+k), (x-k, y-k), (x+k, y-k), (x-k, y+k)]
+            for i, (nx, ny) in enumerate(arr):
+                if ck[i]==False:
+                    continue
+                ck[i] = spread_remove_map(nx, ny, ck[i])
 
 def find_remove_tree(x, y, ck):
     if 0<=x<N and 0<=y<N and ck:
