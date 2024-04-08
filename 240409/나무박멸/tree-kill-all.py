@@ -3,7 +3,6 @@
 # K = 제초제 확산 범위
 # C = 제초제 남아있는 년 수
 
-
 def init():
     # 나무 위치 배열
     for i in range(N):
@@ -42,9 +41,6 @@ def grow_and_breed():
         board[x][y] += cnt
         blank_list.append(blanks)
 
-    # print("성장: ")
-    # print(*board, sep='\n')
-
 
     # 2) 번식
     for idx, blanks in enumerate(blank_list):
@@ -52,20 +48,13 @@ def grow_and_breed():
         tx, ty = trees[idx]
         for bx, by in blanks:
             tmp = board[tx][ty] // len(blanks)
+            # tmp==0 이면 추가되지 않음 주의 !!
             if tmp > 0:
                 board[bx][by] += tmp
                 trees.append((bx, by))
     
     trees = list(set(trees))
     trees.sort()
-    # print(trees)
-
-    # print("번식: ")
-    # print(*board, sep='\n')
-    # print("=======================")
-    
-    # print(*board, sep='\n')
-    # print("=======================")
 
 
 def remove():
@@ -172,7 +161,6 @@ if __name__ == '__main__':
 
     init()
     for t in range(1, M+1):
-        # print("<<<<<<<<<<<<<< ", t, " >>>>>>>>>>>>>>>")
         # 제초제 갱신   
         update_remove_map()
 
@@ -181,14 +169,5 @@ if __name__ == '__main__':
 
         # 제초제 뿌리기
         remove()
-
-        # print("BOARD")
-        # print(*board, sep='\n')
-        # print("REMOVE_MAP")
-        # print(*remove_map, sep='\n')
-        # print("TREES")
-        # print(trees, sep='\n')
-        # print("SCORE")
-        # print(ans)
     
     print(ans)
