@@ -42,7 +42,7 @@ def init():
             cx, cy = (rail[-1][0], rail[-1][1])          
             rail.append((cx + dx, cy + dy, (dx, dy)))
     
-    for i in range(N*N-2, -1, -1):
+    for i in range(N*N-1, -1, -1):
         x, y, d = rail[i]
         rail_reversed.append((x, y, (-d[0], -d[1])))
     
@@ -96,6 +96,7 @@ def catcher_move():
     nx = target_rail[next_idx][0]
     ny = target_rail[next_idx][1]
     dir = (0,0)
+    # 방향 바로 바꾸기    
     if (nx, ny) == (0, 0):
         is_reversed = True
         next_idx = 0
@@ -105,7 +106,10 @@ def catcher_move():
         next_idx = 0
         dir = rail[0][2]
     else:
-        dir = target_rail[next_idx+1][2] # 방향 바로 바꾸기
+        if is_reversed:
+            dir = target_rail[next_idx][2] 
+        else: 
+            dir = target_rail[next_idx+1][2] # 방향 바로 바꾸기
 
     catcher_pos = (nx, ny, dir)
     catcher_move_idx = next_idx
@@ -124,7 +128,7 @@ def catcher_check_caught():
 
         if tree_board[see_x][see_y]:
             # 나무 있다면, 지나감
-            # print("나무")
+            # print("나무 : ", (see_x, see_y))
             continue
 
         if len(runner_board[see_x][see_y]) > 0:
@@ -140,6 +144,7 @@ def catcher_check_caught():
     
     # print("술래 잡기 완료")
     # print(cnt)
+    # print(ans)
     # print(runners)
     # print(*runner_board, sep='\n')
     ans += t * cnt
