@@ -1,162 +1,227 @@
-# N = 홀수, 격자 크기
-# M = 도망자 수
-# H = 나무 수
-# K = 턴 수
+# 변수 선언 및 입력:
+n, m, h, k = tuple(map(int, input().split()))
 
-def init():
-    global runners, runner_board, tree_board, rail, catcher_pos, rail_reversed
-    # 도망자 보드 생성
-    runner_board = [[[] for _ in range(N)] for _ in range(N)]
-    runners = {}
-    for num in range(M):
-        x, y, d = tuple(map(int, input().split()))
-        x = x-1
-        y = y-1
-        if d==1:
-            runners[num] = ((x, y, (0,1))) # 오른쪽 보고 시작
-        else:
-            runners[num] = ((x, y, (1,0))) # 아래 보고 시작
-        runner_board[x][y].append(num)
-    
-    # 나무 보드 생성
-    tree_board = [[0]*N for _ in range(N)]
-    for _ in range(H):
-        x, y = tuple(map(int, input().split()))
-        x = x-1
-        y = y-1
-        tree_board[x][y] = 1
+# 각 칸에 있는 도망자 정보를 관리합니다.
+# 도망자의 방향만 저장하면 충분합니다.
+hiders = [
+    [[] for _ in range(n)]
+    for _ in range(n)
+]
+next_hiders = [
+    [[] for _ in range(n)]
+    for _ in range(n)
+]
+tree = [
+    [False] * n
+    for _ in range(n)
+]
 
-    # 술래 달팽이 길 생성
-    rail = []
-    rail_reversed = []
-    catcher_pos = (N//2, N//2, (-1, 0)) # 정중앙에 위치
-    rail.append(catcher_pos)
-    dir = [(-1,0), (0,1), (1,0), (0,-1)]
-    cnt = 0
-    for i in range(N*2-1):
-        if i%2==0 and i!=N*2-2:
-            cnt += 1
+# 정방향 기준으로
+# 현재 위치에서 술래가 움직여야 할 방향을 관리합니다.
+seeker_next_dir = [
+    [0] * n
+    for _ in range(n)
+]
+# 역방향 기준으로
+# 현재 위치에서 술래가 움직여야 할 방향을 관리합니다.
+seeker_rev_dir = [
+    [0] * n
+    for _ in range(n)
+]
 
-        dx, dy = dir[i%4]
-        for c in range(cnt):
-            cx, cy = (rail[-1][0], rail[-1][1])          
-            rail.append((cx + dx, cy + dy, (dx, dy)))
-    
-    for i in range(N*N-1, -1, -1):
-        x, y, d = rail[i]
-        rail_reversed.append((x, y, (-d[0], -d[1])))
+# 술래의 현재 위치를 나타냅니다.
+seeker_pos = (n // 2, n // 2)
+# 술래가 움직이는 방향이 정방향이면 True / 아니라면 False입니다.
+forward_facing = True
+
+ans = 0
+
+# 술래 정보를 입력받습니다.
+for _ in range(m):
+    x, y, d = tuple(map(int, input().split()))
+    hiders[x - 1][y - 1].append(d)
+
+# 나무 정보를 입력받습니다.
+for _ in range(h):
+    x, y = tuple(map(int, input().split()))
+    tree[x - 1][y - 1] = True
 
 
-def runners_move():
-    global runners, runner_board
-    for key in runners.keys():
-        x, y, (dx, dy) = runners[key]
-        cx, cy, X = catcher_pos
+# 정중앙으로부터 끝까지 움직이는 경로를 계산해줍니다.
+def initialize_seeker_path():
+    # 상우하좌 순서대로 넣어줍니다.
+    dxs, dys = [-1, 0, 1, 0], [0, 1, 0, -1]
 
-        if abs(x-cx) + abs(y-cy) > 3:
-            # 술래와의 거리가 3 초과인 도망자는 이동 X
-            continue
+    # 시작 위치와 방향, 
+    # 해당 방향으로 이동할 횟수를 설정합니다. 
+    curr_x, curr_y = n // 2, n // 2
+    move_dir, move_num = 0, 1
 
-        nx, ny = x + dx, y + dy
+    while curr_x or curr_y:
+        # move_num 만큼 이동합니다.
+        for _ in range(move_num):
+            seeker_next_dir[curr_x][curr_y] = move_dir
+            curr_x, curr_y = curr_x + dxs[move_dir], curr_y + dys[move_dir]
+            seeker_rev_dir[curr_x][curr_y] = move_dir + 2 if move_dir < 2 else move_dir - 2
 
-        if 0<=nx<N and 0<=ny<N:
-            # 범위 안에 있으면
-            pass
-        else:
-            # 범위 안에 없으면
-            # 방향 반대로 바꾸기
-            nx, ny = x - dx, y - dy
-            dx, dy = -dx, -dy
+            # 이동하는 도중 (0, 0)으로 오게 되면,
+            # 움직이는 것을 종료합니다.
+            if not curr_x and not curr_y:
+                break
         
-        # 술래 없으면 이동
-        if (nx, ny) != catcher_pos[:2]:
-            runners[key] = (nx, ny, (dx, dy))
-            runner_board[x][y].remove(key)
-            runner_board[nx][ny].append(key)
+        # 방향을 바꿉니다.
+        move_dir = (move_dir + 1) % 4
+        # 만약 현재 방향이 위 혹은 아래가 된 경우에는
+        # 특정 방향으로 움직여야 할 횟수를 1 증가시킵니다.
+        if move_dir == 0 or move_dir == 2:
+            move_num += 1
 
 
-def catcher_move():
-    global catcher_pos, is_reversed, catcher_move_idx
-    target_rail = rail
-    if is_reversed:
-        # 방향 설정
-        target_rail = rail_reversed
+# 격자 내에 있는지를 판단합니다.
+def in_range(x, y):
+    return 0 <= x and x < n and 0 <= y and y < n
+
+
+def hider_move(x, y, move_dir):
+    dxs, dys = [0, 0, 1, -1], [-1, 1, 0, 0]
+    # 좌우하상 순서대로 넣어줍니다.
+
+    nx, ny = x + dxs[move_dir], y + dys[move_dir]
+    # Step 1.
+    # 만약 격자를 벗어난다면
+    # 우선 방향을 틀어줍니다.
+    if not in_range(nx, ny):
+        # 0 <. 1 , 2 <. 3이 되어야 합니다.
+        move_dir = 1 - move_dir if move_dir < 2 else 5 - move_dir
+        nx, ny = x + dxs[move_dir], y + dys[move_dir]
     
-    next_idx = catcher_move_idx + 1
-    nx = target_rail[next_idx][0]
-    ny = target_rail[next_idx][1]
-    dir = (0,0)
-    # 방향 바로 바꾸기    
-    if (nx, ny) == (0, 0):
-        is_reversed = True
-        next_idx = 0
-        dir = rail_reversed[0][2]
-    elif (nx, ny) == (N//2, N//2):
-        is_reversed = False
-        next_idx = 0
-        dir = rail[0][2]
+    # Step 2.
+    # 그 다음 위치에 술래가 없다면 움직여줍니다.
+    if (nx, ny) != seeker_pos:
+        next_hiders[nx][ny].append(move_dir)
+    # 술래가 있다면 더 움직이지 않습니다.
     else:
-        if is_reversed:
-            dir = target_rail[next_idx][2] 
-        else: 
-            dir = target_rail[next_idx+1][2] # 방향 바로 바꾸기
-
-    catcher_pos = (nx, ny, dir)
-    catcher_move_idx = next_idx
+        next_hiders[x][y].append(move_dir)
 
 
-def catcher_check_caught():
-    global ans, runner_board, runners
-    # print("술래 pos: ", catcher_pos)
-    x, y, (dx, dy) = catcher_pos
+def dist_from_seeker(x, y):
+     # 현재 술래의 위치를 불러옵니다.
+    seeker_x, seeker_y = seeker_pos
+    return abs(seeker_x - x) + abs(seeker_y - y)
+
+
+def hider_move_all():
+    # Step 1. next hider를 초기화해줍니다.
+    for i in range(n):
+        for j in range(n):
+            next_hiders[i][j] = []
     
-    cnt = 0
-    for i in range(3):
-        see_x, see_y = x + (dx*i), y + (dy*i)
-        if see_x<0 or see_x>=N or see_y<0  or see_y>=N:
-            continue
+    # Step 2. hider를 전부 움직여줍니다.
+    for i in range(n):
+        for j in range(n):
+            # 술래와의 거리가 3 이내인 도망자들에 대해서만
+            # 움직여줍니다.
+            if dist_from_seeker(i, j) <= 3:
+                for move_dir in hiders[i][j]:
+                    hider_move(i, j, move_dir)
+            # 그렇지 않다면 현재 위치 그대로 넣어줍니다.
+            else:
+                for move_dir in hiders[i][j]:
+                    next_hiders[i][j].append(move_dir)
 
-        if tree_board[see_x][see_y]:
-            # 나무 있다면, 지나감
-            continue
-
-        if len(runner_board[see_x][see_y]) > 0:
-            # 도망자가 있고, 나무도 없다면
-            # 잡는다
-            cnt += len(runner_board[see_x][see_y])
-            keys = runner_board[see_x][see_y]
-            for key in keys:
-                del runners[key]
-            runner_board[see_x][see_y] = []
-
-    ans += t * cnt
+    # Step 3. next hider값을 옮겨줍니다.
+    for i in range(n):
+        for j in range(n):
+            hiders[i][j] = next_hiders[i][j]
 
 
+# 현재 술래가 바라보는 방향을 가져옵니다.
+def get_seeker_dir():
+    # 현재 술래의 위치를 불러옵니다.
+    x, y = seeker_pos
 
-
-
-
-
-if __name__ == '__main__':
-    N, M, H, K = tuple(map(int, input().split()))
-    ans = 0
-
-    # 초기화
-    runners, runner_board, tree_board = [], [], []
-    rail, rail_reversed = [], []
-    catcher_pos = []
-    catcher_move_idx = 0
-    is_reversed = False
-
-    init()
-
-    for t in range(1, K+1):
-        # 도망자 이동
-        runners_move()
-
-        # 술래 이동
-        catcher_move()
-        # 술래 시야 확인
-        catcher_check_caught()
+    # 어느 방향으로 움직여야 하는지에 대한 정보를 가져옵니다.
+    move_dir = 0
+    if forward_facing:
+        move_dir = seeker_next_dir[x][y] 
+    else:
+        move_dir = seeker_rev_dir[x][y]
     
-    print(ans)
+    return move_dir
+
+
+def check_facing():
+    global forward_facing
+    
+    # Case 1. 정방향으로 끝에 다다른 경우라면, 방향을 바꿔줍니다.
+    if seeker_pos == (0, 0) and forward_facing:
+        forward_facing = False
+    # Case 2. 역방향으로 끝에 다다른 경우여도, 방향을 바꿔줍니다.
+    if seeker_pos == (n // 2, n // 2) and not forward_facing:
+        forward_facing = True
+
+
+def seeker_move():
+    global seeker_pos
+
+    x, y = seeker_pos
+
+    # 상우하좌 순서대로 넣어줍니다.
+    dxs, dys = [-1, 0, 1, 0], [0, 1, 0, -1]
+
+    move_dir = get_seeker_dir()
+
+    # 술래를 한 칸 움직여줍니다.
+    seeker_pos = (x + dxs[move_dir], y + dys[move_dir])
+    
+    # 끝에 도달했다면 방향을 바꿔줘야 합니다.
+    check_facing()
+
+
+def get_score(t):
+    global ans
+
+    # 상우하좌 순서대로 넣어줍니다.
+    dxs, dys = [-1, 0, 1, 0], [0, 1, 0, -1]
+
+    # 현재 술래의 위치를 불러옵니다.
+    x, y = seeker_pos
+    
+    # 술래의 방향을 불러옵니다.
+    move_dir = get_seeker_dir()
+    
+    # 3칸을 바라봅니다.
+    for dist in range(3):
+        nx, ny = x + dist * dxs[move_dir], y + dist * dys[move_dir]
+        
+        # 격자를 벗어나지 않으며 나무가 없는 위치라면 
+        # 도망자들을 전부 잡게 됩니다.
+        if in_range(nx, ny) and not tree[nx][ny]:
+            # 해당 위치의 도망자 수 만큼 점수를 얻게 됩니다.
+            ans += t * len(hiders[nx][ny])
+
+            # 도망자들이 사라지게 됩니다.
+            hiders[nx][ny] = []
+
+
+def simulate(t):
+    # 도망자가 움직입니다.
+    hider_move_all()
+
+    # 술래가 움직입니다.
+    seeker_move()
+    
+    # 점수를 얻습니다.
+    get_score(t)
+
+
+# 술래잡기 시작 전에
+# 구현상의 편의를 위해
+# 술래 경로 정보를 미리 계산합니다.
+initialize_seeker_path()
+
+# k번에 걸쳐 술래잡기를 진행합니다.
+for t in range(1, k + 1):
+    simulate(t)
+
+print(ans)
