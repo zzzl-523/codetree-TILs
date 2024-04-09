@@ -4,7 +4,7 @@
 # K = 턴 수
 
 def init():
-    global runners, runner_board, tree_board, rail, catcher_pos
+    global runners, runner_board, tree_board, rail, catcher_pos, rail_reversed
     # 도망자 보드 생성
     runner_board = [[[] for _ in range(N)] for _ in range(N)]
     runners = {}
@@ -30,6 +30,7 @@ def init():
     rail = []
     rail_reversed = []
     catcher_pos = (N//2, N//2, (-1, 0)) # 정중앙에 위치
+    rail.append(catcher_pos)
     dir = [(-1,0), (0,1), (1,0), (0,-1)]
     cnt = 0
     for i in range(N*2-1):
@@ -38,10 +39,7 @@ def init():
 
         dx, dy = dir[i%4]
         for c in range(cnt):
-            if i==0:
-                cx, cy, X = catcher_pos
-            else:
-                cx, cy = (rail[-1][0], rail[-1][1])          
+            cx, cy = (rail[-1][0], rail[-1][1])          
             rail.append((cx + dx, cy + dy, (dx, dy)))
     
     for i in range(N*N-2, -1, -1):
@@ -100,11 +98,11 @@ def catcher_move():
     dir = (0,0)
     if (nx, ny) == (0, 0):
         is_reversed = True
-        next_idx = -1
+        next_idx = 0
         dir = rail_reversed[0][2]
     elif (nx, ny) == (N//2, N//2):
         is_reversed = False
-        next_idx = -1
+        next_idx = 0
         dir = rail[0][2]
     else:
         dir = target_rail[next_idx+1][2] # 방향 바로 바꾸기
@@ -121,6 +119,9 @@ def catcher_check_caught():
     cnt = 0
     for i in range(3):
         see_x, see_y = x + (dx*i), y + (dy*i)
+        if see_x<0 or see_x>=N or see_y<0  or see_y>=N:
+            continue
+
         if tree_board[see_x][see_y]:
             # 나무 있다면, 지나감
             # print("나무")
@@ -154,9 +155,12 @@ if __name__ == '__main__':
     ans = 0
 
     # 초기화
-    runner_board, tree_board, rail, catcher_pos, runners = [], [], [], [], []
+    runners, runner_board, tree_board = [], [], []
+    rail, rail_reversed = [], []
+    catcher_pos = []
+    catcher_move_idx = 0
     is_reversed = False
-    catcher_move_idx = -1
+
     init()
 
     for t in range(1, K+1):
