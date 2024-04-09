@@ -45,12 +45,6 @@ def init():
     for i in range(N*N-1, -1, -1):
         x, y, d = rail[i]
         rail_reversed.append((x, y, (-d[0], -d[1])))
-    
-    # print(rail)
-    # print(rail_reversed)
-    # print("처음 생성: ")
-    # print("runners: ", runners)
-    # print(*runner_board, sep='\n')
 
 
 def runners_move():
@@ -79,10 +73,6 @@ def runners_move():
             runners[key] = (nx, ny, (dx, dy))
             runner_board[x][y].remove(key)
             runner_board[nx][ny].append(key)
-    
-    # print("도망자 이동 완료")
-    # print("runners: ", runners)
-    # print(*runner_board, sep='\n')
 
 
 def catcher_move():
@@ -128,25 +118,17 @@ def catcher_check_caught():
 
         if tree_board[see_x][see_y]:
             # 나무 있다면, 지나감
-            # print("나무 : ", (see_x, see_y))
             continue
 
         if len(runner_board[see_x][see_y]) > 0:
             # 도망자가 있고, 나무도 없다면
             # 잡는다
-            # print("술래 잡기 시작")
-            # print(runner_board[see_x][see_y])
             cnt += len(runner_board[see_x][see_y])
             keys = runner_board[see_x][see_y]
             for key in keys:
                 del runners[key]
             runner_board[see_x][see_y] = []
-    
-    # print("술래 잡기 완료")
-    # print(cnt)
-    # print(ans)
-    # print(runners)
-    # print(*runner_board, sep='\n')
+
     ans += t * cnt
 
 
