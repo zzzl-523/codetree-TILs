@@ -107,10 +107,16 @@ def init():
                 q.append((nx, ny))
                 visited[nx][ny] = True
         
-
+    # print("init --------------")
+    # print(*board, sep='\n')
+    # print("group_board")
+    # print(*group_board, sep='\n')
+    # print()
     # for item in groups:
     #     item.print()            
     #     print("================")
+    
+    
 
 
 # 예술점수 계산 함수
@@ -140,15 +146,6 @@ def rotate():
     global board
     # 1) 십자로 구역 나누기
     new_board = [[0]*N for _ in range(N)]
-    # print("MINI: ")
-    # print(*mini_board1, sep='\n')
-    # print()
-    # print(*mini_board2, sep='\n')
-    # print()
-    # print(*mini_board3, sep='\n')
-    # print()
-    # print(*mini_board4, sep='\n')
-    # print("----------------------")
     
     (cx, cy) = (N//2, N//2) # center_pos
     ## 십자 부분
@@ -157,9 +154,7 @@ def rotate():
         new_board[cx][i] = board[cx][i]
 
     # 2) board를 전체 90도 회전 (시계)
-    # mini_board1 = [board[i][:N//2] for i in range(N//2)]
     mini_board1 = rotate_clock([board[i][:N//2] for i in range(N//2)])
-    # mini_board1 = rotate_clock(mini_board1)
     mini_board2 = rotate_clock([board[i][(N//2)+1:] for i in range(N//2)])
     mini_board3 = rotate_clock([board[i][:N//2] for i in range((N//2)+1, N)])
     mini_board4 = rotate_clock([board[i][(N//2)+1:] for i in range((N//2)+1, N)])
@@ -175,12 +170,12 @@ def rotate():
                     if j<N//2:
                         new_board[i][j] = mini_board1[i][j]
                     else:
-                        new_board[i][j] = mini_board2[i][(N//2+1)-j]
+                        new_board[i][j] = mini_board2[i][j-(N//2+1)]
                 elif i>N//2:
                     if j<N//2:
-                        new_board[i][j] = mini_board3[(N//2+1) - i][j]
+                        new_board[i][j] = mini_board3[i-(N//2+1)][j]
                     else:
-                        new_board[i][j] = mini_board4[(N//2+1) - i][(N//2+1)-j]
+                        new_board[i][j] = mini_board4[i-(N//2+1)][j-(N//2+1)]
                     
     board = new_board
     # print()
@@ -197,9 +192,9 @@ def rotate_clock(mat):
             tmp[i][j] = mat[i][j]
     
     # 회전
+    max_size = size-1
     for i in range(size):
         for j in range(size):
-            max_size = size-1
             tmp[j][max_size-i] = mat[i][j]
             tmp[max_size-i][max_size-j] = mat[j][max_size-i]
             tmp[max_size-j][i] = mat[max_size-i][max_size-j] 
@@ -219,9 +214,9 @@ def rotate_counter_clock(mat):
             tmp[i][j] = mat[i][j]
     
     # 회전
+    max_size = size-1
     for i in range(size):
         for j in range(size):
-            max_size = size-1
             tmp[i][j] = mat[j][max_size-i]
             tmp[j][max_size-i] = mat[max_size-i][max_size-j]
             tmp[max_size-i][max_size-j] = mat[max_size-j][i]
