@@ -11,14 +11,6 @@ class Player():
         self.gun = 0
         self.point = 0
 
-    def print(self):
-        print("---Player ", self.idx, " info---")
-        print("pos: ", self.pos)
-        print("direction: ", self.direction)
-        print("hp: ", self.hp)
-        print("gun: ", self.gun)
-        print("point: ", self.point)
-
 def func(num):
     if int(num)==0:
         return []
@@ -46,10 +38,6 @@ def init():
         players.append(tmp)
         player_board[x][y] = tmp
 
-    # print(*gun_board, sep='\n')
-    # print()
-    # print(*player_board, sep='\n')
-
 
 # 2) 전체 이동
 def all_move():
@@ -60,8 +48,6 @@ def all_move():
         # 방향대로 이동
         nx = x + dx
         ny = y + dy
-
-        # print(player.idx, "번 플레이어 -> ", (nx, ny), "로 이동")
 
         if nx<0 or nx>=N or ny<0 or ny>=N:
             # 범위 벗어나면 방향 반대로
@@ -84,14 +70,6 @@ def all_move():
             player_board[nx][ny] = winner 
             winner.pos = (nx, ny)
 
-            # print("--싸운 후 이동 완료--")
-            # for i in range(N):
-            #     for j in range(N):
-            #         if type(player_board[i][j]) == int:
-            #             print('(-, -)', end=' ')
-            #         else: print((player_board[i][j].idx, player_board[i][j].direction), end=' ')
-            #     print()
-            
         else:
             # 다른 플레이어 없으면
             ## 이동
@@ -141,9 +119,7 @@ def loser_move(player, pos):
         else:
             player.direction = (player.direction + t)%4
             break
-        
-
-    # print("진 사람 이동: ",player.idx,"번 플레이어 -> ", (nx, ny))
+   
     move(player, (nx, ny))
     get_gun(player, (nx, ny))
 
@@ -182,10 +158,7 @@ def fight(A, B):
         winner, loser = loser, winner
     
     winner.point += abs(A_ - B_)
-    # print("싸우기")
-    # print("winner: ", winner.idx, winner.hp, winner.gun, winner.point)
-    # print("loser: ", loser.idx, loser.hp, loser.gun, loser.point)
-    
+ 
     return [winner, loser]
         
 
@@ -202,29 +175,10 @@ if __name__=='__main__':
 
     # K라운드 진행
     for t in range(1, K+1):
-        # print("-----시작-----")
-        # for i in range(N):
-        #     for j in range(N):
-        #         if type(player_board[i][j]) == int:
-        #             print('(-, -)', end=' ')
-        #         else: print((player_board[i][j].idx, player_board[i][j].direction), end=' ')
-        #     print()
-        
-        # print(*gun_board, sep='\n')
         # 이동
         all_move()
 
-        # print("-----결과-----")
-        # for player in players:
-        #     player.print()
-        
-        # for i in range(N):
-        #     for j in range(N):
-        #         if type(player_board[i][j]) == int:
-        #             print('(-, -)', end=' ')
-        #         else: print((player_board[i][j].idx, player_board[i][j].direction), end=' ')
-        #     print()
-
+    # 결과 출력
     for idx, player in enumerate(players):
         if idx == len(players)-1:
             print(player.point)
