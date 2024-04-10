@@ -61,12 +61,7 @@ def init():
             
             tmp.cnt = cnt
             groups.append(tmp)
-    
-    # for item in groups:
-    #     print(item.print())
-    # print(*group_board, sep='\n')
 
-    # print("<이웃 추가>")
     # 2) 그룹 조합 & 맞닿는 변 개수 구하기
     visited = [[False]*N for _ in range(N)]
     q = deque()
@@ -101,23 +96,11 @@ def init():
                 if visited[nx][ny]:
                     continue
 
-
-                # print("현재 idx: ", item.idx, "추가되는 것: ", (nx, ny))
                 # 같은 그룹만 큐에 추가
                 q.append((nx, ny))
                 visited[nx][ny] = True
         
-    # print("init --------------")
-    # print(*board, sep='\n')
-    # print("group_board")
-    # print(*group_board, sep='\n')
-    # print()
-    # for item in groups:
-    #     item.print()            
-    #     print("================")
     
-    
-
 
 # 예술점수 계산 함수
 def calc_score():
@@ -129,11 +112,6 @@ def calc_score():
             A = item
             B = groups[key]
 
-            # print("조합")
-            # print("A, B", A.idx, B.idx)
-            # print("A: ", A.cnt, A.value, A.neighbor)
-            # print("B: ", B.cnt, B.value, B.neighbor)
-            # print((A.cnt + B.cnt) * (A.value * B.value) * A.neighbor[key])
             score += (A.cnt + B.cnt) * (A.value * B.value) * A.neighbor[key]
             B.neighbor[item.idx] = 0    # 중복 방지
 
