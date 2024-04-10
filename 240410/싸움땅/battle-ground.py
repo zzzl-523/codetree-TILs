@@ -109,6 +109,7 @@ def move(player, pos):
     x, y = player.pos
 
     if (nx, ny)==(x, y):
+        player_board[nx][ny] = player
         # 같으면 이동 X
         return
     
@@ -125,7 +126,7 @@ def loser_move(player, pos):
     nx = x + dx
     ny = y + dy
     # 방향대로 이동
-    for t in range(3):
+    for t in range(4):
         dx, dy = d_xy[(player.direction + t)%4]
         nx = x + dx
         ny = y + dy
