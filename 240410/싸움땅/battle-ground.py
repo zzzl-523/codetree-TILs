@@ -122,8 +122,6 @@ def loser_move(player, pos):
     x, y = pos
     dx, dy = d_xy[player.direction]
 
-    # print("x y", (x,y))
-
     nx = x + dx
     ny = y + dy
     # 방향대로 이동
@@ -159,6 +157,7 @@ def get_gun(player, gun_pos):
         # 총 있으면
         max_gun = max(gun_board[nx][ny])
         if player.gun < max_gun:
+            gun_board[nx][ny].append(player.gun)
             player.gun = max_gun
             gun_board[nx][ny].remove(max_gun)
 
@@ -175,8 +174,6 @@ def fight(A, B):
     A_ = A.hp + A.gun
     B_ = B.hp + B.gun
 
-    # print("싸우기")
-    # print(A_, B_)
     winner, loser = A, B
     if A_ < B_:
         winner, loser = loser, winner
@@ -184,6 +181,7 @@ def fight(A, B):
         winner, loser = loser, winner
     
     winner.point += abs(A_ - B_)
+    # print("싸우기")
     # print("winner: ", winner.idx, winner.hp, winner.gun, winner.point)
     # print("loser: ", loser.idx, loser.hp, loser.gun, loser.point)
     
