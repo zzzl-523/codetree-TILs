@@ -129,7 +129,7 @@ def check(ID):
         
         if len(belt) < 3:
             # 벨트에 선물이 아예 없으면 ***
-            return [False]
+            continue
         if ID in belt.keys():
             return [True, key] # 벨트 번호
     return [False]
