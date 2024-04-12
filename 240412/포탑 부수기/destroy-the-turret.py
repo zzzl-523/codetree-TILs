@@ -5,15 +5,6 @@ class Potab():
         self.attack_time = attack_time
         self.x = x
         self.y = y
-    
-    def print(self):
-        print("---포탑 정보 출력 ---")
-        print("ID: ", self.ID)
-        print("공격력 hp: ", self.hp)
-        print("공격 시점 attack_time: ", self.attack_time)
-        print("x: ", self.x)
-        print("y: ", self.y)
-
 
 
 def init():
