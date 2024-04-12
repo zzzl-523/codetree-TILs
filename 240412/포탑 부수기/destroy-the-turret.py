@@ -40,10 +40,7 @@ def init():
                 # 포탑 생성 & 포탑 배열에 추가
                 new = Potab(p_id, hp_board[r][c], 0, r, c)
                 potabs[p_id] = new
-        
-    # print(*hp_board, sep='\n')
-    # print()
-    # print(*potab_board, sep='\n')
+
 
 # 1) 공격자 선정
 def set_attacker():
@@ -124,8 +121,6 @@ def rasor_attack():
         if potab_board[x][y] == target_id:
             # 서브 타깃 설정
             sub_targets = tmp_subs
-            # print("서브 타깃 설정: ", tmp_subs)
-            # print("결과: ", sub_targets)
             break
 
         for dx, dy in d_xy:
@@ -142,18 +137,15 @@ def rasor_attack():
             # 이미 방문했으면 제외            
             if visited[nx][ny]:
                 continue
-            # print("경로")
-            # print((nx, ny), tmp_subs)
+            
             visited[nx][ny] = True
             q.append((nx, ny, tmp_subs + [potab_board[nx][ny]]))
 
     # 공격 적용
     if sub_targets: # 경로 있으면 레이저 어택 적용
-        # print("경로 있음")
         sub_targets = sub_targets[:-1]
         return(True)
     else:           # 없으면 포탄 어택
-        # print("경로 없음")
         return(False)
 
 # 포탄 어택 함수
@@ -188,7 +180,6 @@ def destroy_potab():
     # 공격력 0 이하인 포탑 부수기
     
     potab_arr = list(potabs.values())
-    # print(potab_arr)
     for potab in potab_arr:
         if potab.hp <= 0:
             # 포탑 제거
@@ -202,14 +193,11 @@ def destroy_potab():
 
 # 4) 포탑 정비
 def rearrange_potab():
-    # print("관련 없는 ID 출력")
     for ID in potabs:
         # 공격과 관련 없으면        
         if ID != attacker_id and ID != target_id and ID not in sub_targets:
-            # print(ID, end=' ')
             potab = potabs[ID]
             change_hp(potab, 1)
-    # print()
 
 
 if __name__ == '__main__':
