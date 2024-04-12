@@ -236,54 +236,16 @@ if __name__ == '__main__':
 
         # 공격자 선정
         set_attacker()
-        # print("<< 1. 공격자 선정 >>")
-        # print("공격자: ")
-        attacker = potabs[attacker_id]
-        # attacker.print()
 
         # 공격자 공격
-        # print("<< 2. 공격자 공격 >>")
-        # print("공격 전")
-        # print(*hp_board, sep='\n')
-        # print()
-        # print(*potab_board, sep='\n')
         attack()
     
-        # print("타깃: ", target_id)
-        # print("서브: ", sub_targets)
-
-        # print("공격 후")
-        # print(*hp_board, sep='\n')
-        # print()
-        # print(*potab_board, sep='\n')
-
-
         # 포탑 부서짐
-        # print("<< 3. 포탑 부서짐 >>")
-        
         destroy_potab()
         
-        # print("제거 결과")
-        # print(*hp_board, sep='\n')
-        # print()
-        # print(*potab_board, sep='\n')
-    
-
-
-        # 포탑 정비
-        # print(" << 4. 포탑 정비 >>")
-        
+        # 포탑 정비    
         rearrange_potab()
 
-        # print("정비 결과")
-        # print(*hp_board, sep='\n')
-        # print()
-        # print(*potab_board, sep='\n')
-        potab_arr = list(potabs.values())
-        # for potab in potab_arr:
-        #     potab.print()
-
-        # print("============================================")
 
     # 최종 결과 출력
     tmp_arr = list(potabs.values())
