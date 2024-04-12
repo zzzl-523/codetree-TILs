@@ -76,7 +76,6 @@ def attack():
         potan_attack()
     
     ## 공격 적용
-    # print("sub: ", sub_targets)
     apply_attack(target, sub_targets, attacker.hp)
     attacker.attack_time  = now_attack_time
 
