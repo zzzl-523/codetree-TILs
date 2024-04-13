@@ -65,10 +65,17 @@ def  move_rudolf():
     rx, ry = rudolf_pos
 
     # 산타 선택
-    tmp = sorted(list(santas.values()), key=lambda x:((calc_dist(rudolf_pos, x.pos)), -x.pos[0], -x.pos[1]))
-    picked_id = tmp[0].ID
-    picked_santa = tmp[0]
-    # tmp[0].print()
+    tmp = list(santas.values())
+    arr = []
+    for t in tmp:
+        if t.status==-1:
+            continue
+        arr.append(t)
+
+    arr.sort(key=lambda x:((calc_dist(rudolf_pos, x.pos)), -x.pos[0], -x.pos[1]))
+    picked_id = arr[0].ID
+    picked_santa = arr[0]
+    # arr[0].print()
 
     # 돌진
     d_diag = [(1,1), (1,-1), (-1,-1), (-1,1)]
@@ -152,14 +159,12 @@ def move_santa():
             if is_out_board(nx, ny):
                 continue
 
-
+            if board[nx][ny] > 0:
+                continue
             # 루돌프와 가까워지는지 체크
             dist_after = calc_dist((nx, ny), rudolf_pos)
 
-            if board[nx][ny] > 0:
-                continue
-
-            if dist_after == min_value:
+            if dist_after == min_value and dist_after!=calc_dist(santa.pos, rudolf_pos):
                 if will_move_pos == (-1, -1) and board[nx][ny] <= 0:
                     # 같은 크기지만, 이전 값이 불가능한 경우
                     # 이동
