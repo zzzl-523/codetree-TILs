@@ -7,13 +7,6 @@ class Santa():
         self.direction = (0, 0)
         self.score = 0
 
-    def print(self):
-        print("---- 산타 출력 ----")
-        print("ID: ", self.ID)
-        print("pos: ", self.pos)
-        print("status: ", self.status)
-        print("directions: ", self.direction)
-        print("score: ", self.score)
 
 def init():
     global N, M, P, C, D, santas, board, rudolf_pos
@@ -40,12 +33,6 @@ def init():
         # board에 추가
         board[x][y] = ID
 
-    # 출력
-    # print(*board, sep='\n')
-    # print()
-    # for i in range(1, P+1):
-    #     santas[i].print()
-
 
 # 산타 상태 갱신
 def check_santa():
@@ -61,7 +48,6 @@ def is_out_board(nx, ny):
 # 루돌프 이동
 def  move_rudolf():
     global picked_ID, rudolf_pos, rudolf_direction, santas, out_santas
-    # print("<<< 루돌프 이동 >>>")
     rx, ry = rudolf_pos
 
     # 산타 선택
@@ -75,7 +61,6 @@ def  move_rudolf():
     arr.sort(key=lambda x:((calc_dist(rudolf_pos, x.pos)), -x.pos[0], -x.pos[1]))
     picked_id = arr[0].ID
     picked_santa = arr[0]
-    # arr[0].print()
 
     # 돌진
     d_diag = [(1,1), (1,-1), (-1,-1), (-1,1)]
@@ -103,15 +88,15 @@ def  move_rudolf():
     # 루돌프 위치 바꿔주기
     board[rx][ry] = 0
     board[rudolf_pos[0]][rudolf_pos[1]] = -1
-    # print(rudolf_pos, rudolf_direction)
-    # print(*board, sep='\n')
 
+
+## 거리 계산 함수
 def calc_dist(a_pos, b_pos):
     ax, ay = a_pos
     bx, by = b_pos
     return (ax - bx) ** 2 + (ay - by) ** 2
 
-
+## 좌표 바꿔주는 함수
 def change_pos(santa, new_pos, direction):
     nx, ny = new_pos
     sx, sy = santa.pos
@@ -139,11 +124,9 @@ def change_pos(santa, new_pos, direction):
 
 # 산타 이동
 def move_santa():
-    # print("<<< 산타 이동 >>>")
     # 기절한 상태에서는 움직이지 않음
     arr = sorted(list(santas.values()), key=lambda x:x.ID)
     for santa in arr:
-        # print("ID:", santa.ID, "상태: ", santa.status)
         if santa.status < 2:
             continue
 
@@ -187,24 +170,18 @@ def move_santa():
         # 일단 이동
         ## 이동 불가능한 경우, 이동 X
         if will_move_pos == (-1, -1):
-            # print("이동 X", will_move_pos)
             continue
-        ## 없으면 이동
-        # print("이동 O", will_move_pos)
+        
         change_pos(santa, will_move_pos, will_move_direction)
 
         # 충돌 확인
         check_collapse(santa, rudolf_pos, (-will_move_direction[0], -will_move_direction[1]), D)
-
-    # print(*board, sep='\n')
 
 
 # 충돌
 def check_collapse(santa, rudolf_pos, direction, num):
     if board[rudolf_pos[0]][rudolf_pos[1]] > 0:
         # 산타가 있으면, (충돌)
-        # print("< 충돌 >")
-        # santa.print()
         # 산타 점수 + num
         santa.score += num
         sx, sy = santa.pos
@@ -216,9 +193,6 @@ def check_collapse(santa, rudolf_pos, direction, num):
         # 기절
         if santa.status >= 0:
             santa.status = 0
-
-        # print("< 산타 결과 >")
-        # santa.print()
 
         if num==D:
             board[rudolf_pos[0]][rudolf_pos[1]] = -1
@@ -247,7 +221,6 @@ if __name__ == '__main__':
     init()
 
     for m in range(M):
-        # print("=========", m+1, "번 턴 ========")
         # 종료 조건
         if len(out_santas) >= P:
             break
@@ -261,15 +234,12 @@ if __name__ == '__main__':
         # 산타 이동
         move_santa()
 
-        # print("< 일단 결과 출력 >")
         arr = sorted(list(santas.values()), key=lambda x: x.ID)
         for santa in arr:
             if santa.status >= 0:
                 santa.score += 1
-            # print(santa.score, end=' ')
 
-        # print()
-    # print("-- 최종 결과")
+    # 최종 결과
     arr = sorted(list(santas.values()), key=lambda x: x.ID)
     for santa in arr:
         print(santa.score, end=' ')
